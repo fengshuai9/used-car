@@ -9,6 +9,8 @@ public class PageController {
 
     @RequestMapping("toceshi")
     public String  toceshi(){
+
+        System.out.println("李天雨");
         return "ceshi";
     }
 
