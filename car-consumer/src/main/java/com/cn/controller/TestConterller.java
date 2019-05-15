@@ -18,7 +18,7 @@ public class TestConterller {
 
     @GetMapping("/queryTest")
     public List<TestBean> queryTest(){
-        System.out.println("查");
+        System.out.println("6667777");
         List<TestBean> list= testService.queryTest();
         return list;
     };
