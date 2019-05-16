@@ -18,7 +18,7 @@ public class TestController {
 
     @GetMapping("/queryTest")
     public List<TestBean> queryTest() {
-          System.out.println("查找userList");
+          System.out.println("查1111ist");
         return testMapper.queryTest()   ;
     }
 
