@@ -9,10 +9,20 @@ public class PageController {
 
     @RequestMapping("toceshi")
     public String  toceshi(){
-        //第一44445
+        System.out.println("这是从ider中改的");
         return "ceshi";
     }
 
 
 
+    @RequestMapping("toLogin")
+    public String toLogin(){
+        return "login";
+    }
+
+
+    @RequestMapping("toMain")
+    public String toMain(){
+        return "main";
+    }
 }
