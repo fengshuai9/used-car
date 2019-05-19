@@ -3,6 +3,7 @@ package com.cn.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+
 @Controller
 @RequestMapping("page")
 public class PageController {
@@ -10,7 +11,6 @@ public class PageController {
     //报表统计
     @RequestMapping("toReport")
     public String  toceshi(){
-
         System.out.println("李天雨");
         return "report";
     }
@@ -20,6 +20,10 @@ public class PageController {
 
         return "comments";
     }
-
+    //报表管理
+    @RequestMapping("toReport")
+    public String  toReport(){
+        return "report";
+    }
 
 }
