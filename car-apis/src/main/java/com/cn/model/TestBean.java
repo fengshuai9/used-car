@@ -6,6 +6,7 @@ import lombok.Data;
 
 public class TestBean {
 
+    //主键id  合并主干测试haha
     private  Integer id;
     private  String name;
     private String info;

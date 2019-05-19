@@ -22,4 +22,14 @@ public class PageController {
     }
 
 
+    @RequestMapping("toLogin")
+    public String toLogin(){
+        return "login";
+    }
+
+
+    @RequestMapping("toMain")
+    public String toMain(){
+        return "main";
+    }
 }
