@@ -7,13 +7,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("page")
 public class PageController {
 
-    @RequestMapping("toceshi")
+    //报表统计
+    @RequestMapping("toReport")
     public String  toceshi(){
 
         System.out.println("李天雨");
-        return "ceshi";
+        return "report";
     }
+    //评论管理
+    @RequestMapping("toComments")
+    public String  toCmments(){
 
+        return "comments";
+    }
 
 
 }

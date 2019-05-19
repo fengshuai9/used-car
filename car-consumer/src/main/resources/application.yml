@@ -7,16 +7,14 @@ eureka:
 spring:
   application:
     name: car-consumer
-
   main:
-    allow-bean-definition-overriding: true #允许相同key情况下beanDefinition实例的覆盖
+    allow-bean-definition-overriding: true
+
   thymeleaf:
     cache: false
     enabled: true
 
-feign:
-  hystrix:
-    enabled: true
+
   httpclient:
     connection-timeout: 30000
 

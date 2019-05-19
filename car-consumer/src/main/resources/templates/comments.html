@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>评论管理</title>
+</head>
+<!--  bookstrap插件 -->
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/bootstrap3/js/bootstrap.js"></script>
+<link type="text/css" rel="stylesheet" href="../js/bootstrap3/css/bootstrap.css">
+<!--  加载表格 -->
+<link rel="stylesheet" href="../js/bootstrap-table/bootstrap-table.css">
+<script src="../js/bootstrap-table/bootstrap-table.js"></script>
+<script src="../js/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+<!--  时间插件 -->
+<link rel="stylesheet" href="../js/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css">
+<script src="../js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+<script src="../js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<!--  弹框插件 -->
+<script type="text/javascript" src="../js/bootstrap-bootbox/bootbox.all.min.js"></script>
+<!-- 两级联动插件 -->
+<script type="text/javascript" src="../js/area.js"></script>
+<body>
+<div id="toolbar">
+    <form class="form-inline">
+
+        <!-- 开始时间，结束时间 -->
+        <div class="form-group">
+            <label for="userInputDate">时间</label>
+            <div class="input-group" id="userInputDate">
+                <input type="text" class="form-control date" id="startTime" >
+                <div class="input-group-addon">
+                    <i class="glyphicon glyphicon-calendar"></i>
+                </div>
+                <input type="text" class="form-control date" id="endtTime" >
+            </div>
+        </div>
+
+        <input onclick="serachUser()" class="btn btn-primary" type="button" value="搜索">
+    </form>
+    <button id="delBth" type="button" class="btn btn-danger"><i class="glyphicon glyphicon-remove"></i>批量删除</button>
+</div>
+<div class="table" id="myTable"></div>
+</body>
+<script>
+    $(function(){
+        initMyTable();
+
+    })
+
+    //删除
+    function deleteOne(id){
+        bootbox.confirm({
+            size: "small",
+            message: "您确定删除吗?",
+            callback: function(result){
+                if(result){
+                    $.ajax({
+                        url:"/report/delReport",
+                        type:"post",
+                        data:{ids:id},
+                        success:function(){
+                            $("#myTable").bootstrapTable("refresh");//调用成功，重新查询一下
+                        },
+                        error:function(){
+                            bootbox.alert("删除失败了");
+                        }
+                    })
+                }
+            }
+        })
+
+
+    }
+    //批量删除
+    $("#delBth").click(function(){
+        var selects= $("#myTable").bootstrapTable("getSelections");
+        if(selects==null||selects.length<=0){
+            bootbox.alert("请选择需要删除的数据");
+            return;
+        }
+        bootbox.confirm({
+            size: "small",
+            message: "您确定删除吗?",
+            callback: function(result){
+                var ids="";
+                if(result){
+                    for (var i = 0; i < selects.length; i++) {
+                        ids+=ids==""?selects[i].id:","+selects[i].id;
+                    }
+                    $.ajax({
+                        url:"/report/delReport",
+                        type:"post",
+                        data:{ids:ids},
+                        success:function(){
+                            $("#myTable").bootstrapTable("refresh");//调用成功，重新查询一下
+                        },
+                        error:function(){
+                            bootbox.alert("删除失败了");
+                        }
+                    })
+                }
+            }
+        })
+    })
+    //查询加载表格
+    function initMyTable(){
+        $('#myTable').bootstrapTable({
+            url:'/report/findComments',//获取数据地址
+            toolbar:"#toolbar",
+            method:'post',
+            pagination:true, //是否展示分页
+            contentType:'application/x-www-form-urlencoded',//post请求按照表单方式
+            sidePagination:'server',//分页方式：client客户端分页，server服务端分页（*
+            pageList:[2,5,10],//分页组件
+            pageNumber:1,//展示第一页
+            pageSize:2,//默认每页条数
+            striped:true, //线条效果
+            clickToSelect: true, //是否启用点击选中行
+            queryParams:function(){
+                return {
+                    page:this.pageNumber,
+                    rows:this.pageSize
+                }
+            },
+            columns:[
+                {checkbox:true},
+                {field:"id",title:"主键id"},
+                {field:"carId",title:"汽车id"},
+                {field:"content",title:"评论内容"},
+                {field:'cTime',title:'评论时间',formatter:function formatCreateTime(value,row,index){
+                        var createTime=new Date(value);
+                        return createTime.toLocaleString();
+                  }},
+                {field: "adsc", title: "操作", formatter: function (value, row, index) {
+
+                        var html="<button type='button' class='btn btn btn-danger glyphicon glyphicon-trash' onclick=deleteOne('" + row.id + "')>删除</button>";
+
+                    return  html;
+                  }
+                }
+
+            ]
+        })
+
+    }
+    //条查
+    function serachUser(){
+
+        var start=$("#startTime").val(); //开始时间
+        var end=$("#endtTime").val(); //结束时间
+
+        alert(start);
+        $("#myTable").bootstrapTable("refresh", {
+            query:{
+                startTime:start,
+                endtTime:end
+
+            }
+        });
+
+    }
+    //时间插件
+    $('.date').datetimepicker({
+        language: 'zh-CN',//显示中文
+        format: 'yyyy-mm-dd hh:ii:ss',//显示格式
+        minView: "month",//设置只显示到月份
+        initialDate: new Date(),//初始化当前日期
+        autoclose: true,//选中自动关闭
+        todayBtn: true//显示今日按钮
+    });
+
+
+</script>
+</html>
