@@ -17,7 +17,6 @@ public class PageController {
     //评论管理
     @RequestMapping("toComments")
     public String  toCmments(){
-
         return "comments";
     }
 
