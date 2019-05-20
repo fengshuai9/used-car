@@ -30,7 +30,8 @@ import java.util.HashSet;
  * @since 1.0.0
  */
 @RestController
-public class LoginController {
+public class
+LoginController {
 
     @Autowired
     private LoginMapper loginMapper;
