@@ -46,7 +46,7 @@ public class ShiroConfig {
         //所有的登录拦截都set到这个map中去  anon 是游客登录,不被拦截  authc是被拦截的意思 需要认证登录
         map.put("/login/login","anon");//放过登录页面
         map.put("/statics/*","anon");
-        //map.put("/*/*","authc");//拦截所有页面
+        map.put("/*/*","authc");//拦截所有页面
 
         map.put("/page/toadd","roles[user]");
         map.put("/page/toedit","roles[vip]");
