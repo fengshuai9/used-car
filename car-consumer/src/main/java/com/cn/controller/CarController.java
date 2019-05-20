@@ -28,7 +28,7 @@ public class CarController{
     //批删
     @RequestMapping("/delCars")
     public void delCars(String ids){
-        System.out.println("消费者方接受的批删id号  码："+ids);
+        System.out.println("1消费者方接受的批删id号  码："+ids);
         String[] split = ids.split(",");
         Integer[] arr = new Integer[ids.length()];
         for (int i=0;i<split.length;i++) {
