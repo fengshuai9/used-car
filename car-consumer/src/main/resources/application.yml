@@ -9,10 +9,12 @@ spring:
     name: car-consumer
 
   main:
-    allow-bean-definition-overriding: true #允许相同key情况下beanDefinition实例的覆盖
+    allow-bean-definition-overriding: true
   thymeleaf:
-    cache: false
-    enabled: true
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+
 
 feign:
   hystrix:

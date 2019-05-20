@@ -14,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 @EnableEurekaClient //代表eureka客户端注册到注册中心
 @EnableDiscoveryClient
 @EnableFeignClients //开启feign
-@EnableHystrix
 public class CarConsumerApplication {
 
     public static void main(String[] args) {

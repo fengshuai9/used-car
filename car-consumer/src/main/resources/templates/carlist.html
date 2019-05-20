@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Insert title here</title>
+
+    <!-- 引入jquery -->
+    <script type="text/javascript" src="/js3/jquery-1.9.1.min.js"></script>
+    <!-- 引入bootstrap的css、js -->
+    <link rel="stylesheet" href="/js3/bootstrap3/css/bootstrap.css">
+    <script type="text/javascript" src="/js3/bootstrap3/js/bootstrap.js"></script>
+    <!-- 引入tree的js、css -->
+    <link rel="stylesheet" href="/js3/bootstrap-treeview/bootstrap-treeview.min.css">
+    <script type="text/javascript" src="/js3/bootstrap-treeview/bootstrap-treeview.min.js"></script>
+    <!-- 引入选项卡的js、css -->
+    <link rel="stylesheet" href="/js3/bootStrap-addTabs/bootstrap.addtabs.css">
+    <script type="text/javascript" src="/js3/bootStrap-addTabs/bootstrap.addtabs.min.js"></script>
+    <!-- 引入table的css、js -->
+    <link rel="stylesheet" href="/js3/bootstrap-table/bootstrap-table.css">
+    <script type="text/javascript" src="/js3/bootstrap-table/bootstrap-table.js"></script>
+    <script type="text/javascript" src="/js3/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+    <!-- 引入删除提示框 -->
+    <script type="text/javascript" src="/js3/bootbox/bootbox.min.js"></script>
+    <!-- 引入时间的css、js -->
+    <link rel="stylesheet" href="/js3/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css">
+    <script  src="/js3/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+    <script  src="/js3/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+    <!-- 引入文件上传的css、js -->
+    <link rel="stylesheet" href="/js3/bootstrap-fileinput/css/fileinput.css">
+    <script type="text/javascript" src="/js3/bootstrap-fileinput/js/fileinput.js"></script>
+    <script type="text/javascript" src="/js3/bootstrap-fileinput/js/locales/zh.js"></script>
+</head>
+<body>
+    <div id="toolbar">
+        <button type="button" class="btn btn-primary glyphicon glyphicon-plus"  id="addBtn">新增</button>
+        <button type="button" class="btn btn btn-danger glyphicon glyphicon-trash" id="delBtn">批量删除</button>
+    </div>
+
+    <table class="table" id="myTable"></table>
+</body>
+<script>
+    //初始化用户表格数据
+    $(function () {
+        initUserTable();
+    });
+    function initUserTable() {
+        $('#myTable').bootstrapTable({
+            toolbar: '#toolbar',
+            url: "/car/queryCarList",
+            queryParams: function () {
+                return {};
+            },
+            columns: [
+                {field: "check", checkbox: true},
+                {field: "id", title: "id"},
+                {field: "brand", title: "品牌"},
+                {field: "price", title: "价格",formatter: function (value, row, index) {
+                     return value+" 万元"}},
+                {field: "sizeName", title: "级别"},
+                {field: "displacement", title: "排量",formatter: function (value, row, index) {
+                        return value+" L"}},
+                {field: "mileage", title: "里程",formatter: function (value, row, index) {
+                        return value+" 公里"}},
+                {field: "modeName", title: "驱动方式"},
+                {field: "colorName", title: "颜色"},
+                {field: "phone", title: "电话"},
+                {field: "locationName", title: "城市"},
+                {field: "statusName", title: "检测状态"},
+                {field: "adsc", title: "操作", formatter: function (value, row, index) {
+                    return "<button type='button' class='btn btn btn-danger glyphicon glyphicon-pencil' " +
+                       "onclick='editCar(" + row.id + ")'>修改</button> <button type='button' class='btn btn btn-danger glyphicon glyphicon-trash' onclick='deleteEmp(" + row.id + ")'>删除</button>";
+                    }
+                },
+            ]
+        });
+    }
+//删除
+    function deleteEmp(id) {
+        if (confirm("是否确认删除这条数据?")) {
+            $.ajax({
+                url: "/car/deleteCar",
+                type: "delete",
+                data: {id: id},
+                success: function () {
+                    $('#myTable').bootstrapTable('refresh');
+                }
+            })
+        }
+    }
+    //批量删除
+    $("#delBtn").click(function(){
+        var selects= $("#myTable").bootstrapTable("getSelections");
+        if(selects==null||selects.length<=0){
+            bootbox.alert("请选择需要删除的数据");
+            return;
+        }
+        bootbox.confirm({
+            size: "small",
+            message: "您确定删除吗?",
+            callback: function(result){
+                var ids="";
+                if(result){
+                    for (var i = 0; i < selects.length; i++) {
+                        ids+=ids==""?selects[i].id:","+selects[i].id;
+                    }
+              //      alert(ids);
+                    $.ajax({
+                        url:"/car/delCars",
+                        type:"post",
+                        data:{"ids":ids},
+                        success:function(){
+                            $("#myTable").bootstrapTable("refresh");//调用成功，重新查询一下
+                        },
+                        error:function(){
+                            bootbox.alert("删除失败了");
+                        }
+                    })
+                }
+            }
+        })
+    })
+    //新增弹框
+    $("#addBtn").click(function(){
+        var dialog = bootbox.dialog({
+            title: '新增车辆',
+            message:createAddContent("/page/toAddCars"),
+            size: 'large',
+            buttons: {
+                cancel: {
+                    label: "关闭",
+                    className: 'btn-danger',
+                    callback: function(){
+                        console.log('Custom cancel clicked');
+                    }
+                },
+                ok: {
+                    label: "保存",
+                    className: 'btn-info',
+                    callback: function(){
+                        saveCar();
+                    }
+                }
+            }
+        });
+    })
+    var res;
+    function createAddContent(url){
+        $.ajax({
+            url:url,
+            async:false,
+            success:function(data){
+                res = data;
+            }
+        });
+        return res;
+    }
+//新增保存
+    function saveCar() {
+        $.ajax({
+            url:'/car/insCar',
+            type:'post',
+            //   data:JSON.stringify(),
+            contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+            data:$("#carForm").serialize(),
+            success:function(){
+
+                initUserTable();
+                // $("#myTable").bootstrapTable("refresh");
+                //  alert("1234");
+            },
+            error:function(){
+                bootbox.alert({
+                    size:"small",
+                    title:'提示',
+                    message:"失败"
+                })
+            }
+        })
+    }
+    //修改回显
+    function editCar(id){
+        bootbox.dialog({
+            title:'<i class="glyphicon glyphicon-user">修改用户',//标题
+            message:createAddContent("/page/toEditCar"),  //内容
+            closeButton: true,   //是否可以关闭
+            size:"large",   //弹框大小  large是大
+            buttons:{
+                ok:{
+                    label:"<i class='icon-ok'></i>保存",  //按钮名字
+                    className:"btn-info", //按钮样式
+                    callback:function(){  //点击按钮触发事件
+                        saveCar();
+                    }
+
+                }
+            }
+        })
+
+        $.ajax({
+            url:"/car/queryCarById",
+            data:{id:id},
+            dataType:"json",
+            success:function(data){
+                $("#inputId").val(data.id); //主键id
+                $("#brand").val(data.brand); //品牌
+                $("#price").val(data.price); //价格
+                $("#displacement").val(data.displacement); //排量
+                $("#mileage").val(data.mileage); //里程
+                $("#btime").val(data.btime); //首次上牌时间
+                $("#phone").val(data.phone); //联系电话
+                $("#carColor").val(data.color); //颜色
+                $("#carlocation").val(data.location); //城市
+                //变速箱
+                $("input[name='tcase']").each(function(){
+                    var statusval=$(this).val();
+                    if(statusval==data.tcase){
+                        $(this).prop("checked",true);
+                    }
+                })
+                $("#carsize").val(data.size); //车辆大小
+
+                //驱动方式
+                $("input[name='mode']").each(function(){
+                    var statusval=$(this).val();
+                    if(statusval==data.mode){
+                        $(this).prop("checked",true);
+                    }
+                })
+
+                //图片回显
+               $("#testimg2").val(data.image);
+               // $("#cimg").src(data.image);
+                //2插件回显
+               uploadImg(data.image);
+            },
+            error:function(){
+                bootbox.alert("回显失败了");
+            }
+        })
+    }
+</script>
+</html>
