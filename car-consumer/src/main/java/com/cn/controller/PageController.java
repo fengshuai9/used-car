@@ -12,6 +12,18 @@ public class PageController {
         return "ceshi";
     }
 
+    @RequestMapping("tolist")
+    public String  tolist(){
+        return "list";
+    }
 
+    @RequestMapping("tonews")
+    public String  tonews(){
+        return "news";
+    }
 
+    @RequestMapping("toadd")
+    public String  toadd(){
+        return "addGood";
+    }
 }

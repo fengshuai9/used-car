@@ -12,4 +12,6 @@ public interface TestMapper {
 
     @Select("select * from t_test")
     List<TestBean> queryTest();
+
+
 }
