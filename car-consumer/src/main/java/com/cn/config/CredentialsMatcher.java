@@ -14,7 +14,7 @@ public class CredentialsMatcher extends SimpleCredentialsMatcher {
         UsernamePasswordToken utoken=(UsernamePasswordToken) token;
         //所需加密的参数  即  用户输入的密码
         String source = String.valueOf(utoken.getPassword());
-        //[盐] 一般为用户名 或 随机数
+        //[盐] 一般为用户名 或 随  机数x
         String salt = utoken.getUsername();
         //加密次数
         int hashIterations = 1;
