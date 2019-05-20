@@ -9,7 +9,7 @@ public class PageController {
 
     @RequestMapping("toceshi")
     public String  toceshi(){
-        System.out.println("这是从ider中改的");
+        System.out.println("999999");
         return "ceshi";
     }
 
